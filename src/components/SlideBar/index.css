@@ -1,0 +1,15 @@
+h1 {
+  color: black;
+}
+.slide-bar {
+  padding-bottom: 10px;
+  box-shadow: 0px 1px 0px 0px lightgray;
+  padding-left: 15px;
+}
+.slide-bar {
+  cursor: pointer;
+}
+.active {
+  color: orangered;
+  text-decoration: underline;
+}

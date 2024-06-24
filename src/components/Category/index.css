@@ -1,0 +1,58 @@
+.card {
+  border: 1px solid lightgray;
+  border-radius: 4px;
+  padding: 7px;
+  margin: 10px;
+  font-family: 'Roboto';
+  display: flex;
+  justify-content: space-between;
+}
+.card-head {
+  color: black;
+  font-weight: 600;
+  font-family: 'Roboto';
+  font-size: 15px;
+}
+.dish-price {
+  color: grey;
+  font-weight: 600;
+  margin-top: 5px;
+  font-size: 12px;
+}
+
+.dish-img {
+  width: 75px;
+  height: 100px;
+  border-radius: 4px;
+}
+.calories {
+  align-self: center;
+  color: orange;
+}
+.btn-cont {
+  background-color: green;
+  border-radius: 10px;
+  color: #ffffff;
+  padding: 2px;
+  width: 110px;
+  height: 30px;
+  display: flex;
+  justify-content: space-between;
+}
+.btn {
+  background-color: transparent;
+  border: none;
+  outline: none;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 18px;
+  cursor: pointer;
+}
+@media (min-width: 767px){
+  .content{
+    width: 350px;
+  }
+}
+.content{
+  flex-wrap: wrap;
+}
