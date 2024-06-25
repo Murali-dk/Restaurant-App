@@ -23,3 +23,23 @@ body {
   align-items: center;
   height: 50vh;
 }
+.menu-list {
+  list-style: none;
+}
+@media screen and (min-width: 767px) {
+  .menu-list {
+    display: flex;
+    justify-content: space-between;
+  }
+}
+.menu-list-btn {
+  border: none;
+  outline: none;
+  background-color: transparent;
+  font-size: 18px;
+  cursor: pointer;
+}
+.active {
+  color: orangered;
+  text-decoration: underline;
+}

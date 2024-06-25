@@ -2,7 +2,6 @@ import {Component} from 'react'
 import Loader from 'react-loader-spinner'
 
 import Header from './components/Header'
-import Slide from './components/SlideBar'
 import Category from './components/Category'
 import './App.css'
 
@@ -15,9 +14,8 @@ class App extends Component {
   state = {
     apiStatus: constanceApiStatus.initial,
     apiResponse: [],
-    categories: [],
-    count: 0,
-    activeTab: 'slads',
+    cartCount: 0,
+    activeTab: '11',
   }
 
   componentDidMount() {
@@ -28,36 +26,26 @@ class App extends Component {
     this.setState({activeTab: id})
   }
 
-  convertCamelCase = dataObject => ({
-    tableMenuList: dataObject.table_menu_list,
-  })
-
-  camelCaseConvert = data => ({
-    categoryDishes: data.category_dishes,
-    menuCategory: data.menu_category,
-    menuCategoryId: data.menu_category_id,
-    menuCategoryImage: data.menu_category_image,
-  })
-
-  converting = eachCategory => ({
-    addonCat: eachCategory.addonCat,
-    dishAvailability: eachCategory.dish_Availability,
-    dishType: eachCategory.dish_Type,
-    dishCalories: eachCategory.dish_calories,
-    dishCurrency: eachCategory.dish_currency,
-    dishDescription: eachCategory.dish_description,
-    dishId: eachCategory.dish_id,
-    dishImage: eachCategory.dish_image,
-    dishName: eachCategory.dish_name,
-    dishPrice: eachCategory.dish_price,
-    nexturl: eachCategory.nexturl,
-  })
-
-  categryCamelCase = categoryArray => {
-    const updateDishes = categoryArray.map(eachCategory =>
-      this.converting(eachCategory),
-    )
-    return updateDishes
+  camelCaseConvert = data => {
+    const convertData = data.map(eachData => ({
+      categoryDishes: eachData.category_dishes.map(item => ({
+        addonCat: item.addonCat,
+        dishAvailability: item.dish_Availability,
+        dishType: item.dish_Type,
+        dishCalories: item.dish_calories,
+        dishCurrency: item.dish_currency,
+        dishDescription: item.dish_description,
+        dishId: item.dish_id,
+        dishImage: item.dish_image,
+        dishName: item.dish_name,
+        dishPrice: item.dish_price,
+        nexturl: item.nexturl,
+      })),
+      menuCategory: eachData.menu_category,
+      menuCategoryId: eachData.menu_category_id,
+      menuCategoryImage: eachData.menu_category_image,
+    }))
+    return convertData
   }
 
   getApiInfo = async () => {
@@ -65,33 +53,29 @@ class App extends Component {
 
     const url = 'https://run.mocky.io/v3/2477b10c-ee18-4487-9962-1b3d073432c4'
     const response = await fetch(url)
-
     const data = await response.json()
-    const updatedDataObject = this.convertCamelCase(data[0])
-    const updatedData = updatedDataObject.tableMenuList.map(eachObject =>
-      this.camelCaseConvert(eachObject),
-    )
+    const updatedData = this.camelCaseConvert(data[0].table_menu_list)
 
-    const updateCategoryDishes = updatedData.map(eachObject =>
-      this.categryCamelCase(eachObject.categoryDishes),
-    )
-
+    console.log(data)
     this.setState({
       apiResponse: updatedData,
       apiStatus: constanceApiStatus.success,
-      categories: updateCategoryDishes,
     })
   }
 
   addCount = () => {
-    this.setState(preveState => ({count: preveState.count + 1}))
+    this.setState(preveState => ({cartCount: preveState.cartCount + 1}))
   }
 
   minusCount = () => {
-    const {count} = this.state
-    if (count !== 0) {
-      this.setState(preveState => ({count: preveState.count - 1}))
+    const {cartCount} = this.state
+    if (cartCount !== 0) {
+      this.setState(preveState => ({cartCount: preveState.cartCount - 1}))
     }
+  }
+
+  changeActiveTab = id => {
+    this.setState({activeTab: id})
   }
 
   loadingView = () => (
@@ -101,23 +85,36 @@ class App extends Component {
   )
 
   successView = () => {
-    const {apiResponse, categories, activeTab} = this.state
-    console.log(apiResponse)
-    console.log(categories)
+    const {apiResponse, activeTab} = this.state
+    const filterCategory = apiResponse.find(
+      eachCategory => eachCategory.menuCategoryId === activeTab,
+    )
+    console.log(filterCategory)
     return (
       <div className="card-container">
-        <Slide
-          menuList={apiResponse}
-          changeActive={this.changeActive}
-          activeTab={activeTab}
-        />
-        {categories[0].map(eachCategoryObject => (
+        <ul className="menu-list">
+          {apiResponse.map(eachItem => {
+            const isActive =
+              activeTab === eachItem.menuCategoryId ? 'active' : null
+            return (
+              <li key={eachItem.menuCategoryId}>
+                <button
+                  onClick={() => this.changeActiveTab(eachItem.menuCategoryId)}
+                  type="button"
+                  className={`menu-list-btn ${isActive}`}
+                >
+                  {eachItem.menuCategory}
+                </button>
+              </li>
+            )
+          })}
+        </ul>
+        {filterCategory.categoryDishes.map(eachCategoryObject => (
           <Category
             key={eachCategoryObject.dishId}
             categoryItem={eachCategoryObject}
             addCount={this.addCount}
             minusCount={this.minusCount}
-            addDishCount={this.addDishCount}
           />
         ))}
       </div>
@@ -137,10 +134,10 @@ class App extends Component {
   }
 
   render() {
-    const {count} = this.state
+    const {cartCount} = this.state
     return (
       <div className="bg-container">
-        <Header count={count} />
+        <Header count={cartCount} />
         {this.switchCase()}
       </div>
     )

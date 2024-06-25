@@ -9,7 +9,4 @@ h1 {
 .slide-bar {
   cursor: pointer;
 }
-.active {
-  color: orangered;
-  text-decoration: underline;
-}
+
