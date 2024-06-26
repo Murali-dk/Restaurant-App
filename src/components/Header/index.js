@@ -14,7 +14,7 @@ const Header = props => {
           <FaCartArrowDown className="cart" />
         </div>
         <div className="count">
-          <sup>{count}</sup>
+          <p>{count}</p>
         </div>
       </div>
     </div>
