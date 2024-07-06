@@ -32,6 +32,11 @@ body {
 .menu-category {
   width: 450%;
 }
+.dish-items-cont {
+  list-style: none;
+  width: 100%;
+  margin: 0px;
+}
 @media screen and (min-width: 767px) {
   .menu-list {
     justify-content: space-between;

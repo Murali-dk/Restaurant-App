@@ -36,7 +36,7 @@ const Category = props => {
   }
 
   return (
-    <li className="card">
+    <div className="card">
       <div className="content">
         <h1 className="card-head">{dishName}</h1>
         <p className="dish-price">
@@ -59,7 +59,7 @@ const Category = props => {
       </div>
       <p className="calories">{dishCalories} calories</p>
       <img alt={dishName} className="dish-img" src={dishImage} />
-    </li>
+    </div>
   )
 }
 

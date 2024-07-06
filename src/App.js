@@ -159,12 +159,21 @@ class App extends Component {
     }
   }
 
-  render() {
+  getingCartQuantity = () => {
     const {cartList} = this.state
-    const count = cartList.length
+    let total = 0
+    cartList.map(item => {
+      total += item.quantity
+      return total
+    })
+    return total
+  }
+
+  render() {
+    const getTotal = this.getingCartQuantity()
     return (
       <div className="bg-container">
-        <Header count={count} />
+        <Header count={getTotal} />
         {this.switchCase()}
       </div>
     )
