@@ -1,12 +1,10 @@
-import {useState} from 'react'
 import './index.css'
 
 const Category = props => {
-  const {categoryItem, addCount, minusCount} = props
-
-  const [dishQuantity, setQuantity] = useState(0)
+  const {categoryItem, addCart, removeItemFromCart, cartList} = props
 
   const {
+    dishId,
     dishName,
     dishImage,
     dishPrice,
@@ -25,17 +23,20 @@ const Category = props => {
   }
 
   const increase = () => {
-    addCount()
-    setQuantity(preveState => preveState + 1)
+    addCart(categoryItem)
   }
 
   const decrease = () => {
-    minusCount()
-    setQuantity(preveState => (preveState === 0 ? 0 : preveState - 1))
+    removeItemFromCart(categoryItem)
+  }
+
+  const getQuantity = () => {
+    const cartItem = cartList.find(item => item.dishId === dishId)
+    return cartItem ? cartItem.quantity : 0
   }
 
   return (
-    <div className="card">
+    <li className="card">
       <div className="content">
         <h1 className="card-head">{dishName}</h1>
         <p className="dish-price">
@@ -47,7 +48,7 @@ const Category = props => {
             <button type="button" onClick={decrease} className="btn">
               -
             </button>
-            <p>{dishQuantity}</p>
+            <p>{getQuantity()}</p>
             <button type="button" onClick={increase} className="btn">
               +
             </button>
@@ -56,11 +57,9 @@ const Category = props => {
         <p className="avilable-dish">{a}</p>
         {!dishAvailability && <p className="not-dish">Not available</p>}
       </div>
-      <div className="calories">
-        <p>{dishCalories} calories</p>
-      </div>
-      <img alt="dish" className="dish-img" src={dishImage} />
-    </div>
+      <p className="calories">{dishCalories} calories</p>
+      <img alt={dishName} className="dish-img" src={dishImage} />
+    </li>
   )
 }
 

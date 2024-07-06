@@ -14,8 +14,8 @@ class App extends Component {
   state = {
     apiStatus: constanceApiStatus.initial,
     apiResponse: [],
-    cartCount: 0,
-    activeTab: '11',
+    cartList: [],
+    activeTab: '',
   }
 
   componentDidMount() {
@@ -51,26 +51,51 @@ class App extends Component {
   getApiInfo = async () => {
     this.setState({apiStatus: constanceApiStatus.inProgress})
 
-    const url = 'https://run.mocky.io/v3/2477b10c-ee18-4487-9962-1b3d073432c4'
+    const url =
+      'https://apis2.ccbp.in/restaurant-app/restaurant-menu-list-details'
     const response = await fetch(url)
     const data = await response.json()
     const updatedData = this.camelCaseConvert(data[0].table_menu_list)
-
     console.log(data)
     this.setState({
       apiResponse: updatedData,
       apiStatus: constanceApiStatus.success,
+      activeTab: updatedData[0].menuCategoryId,
     })
   }
 
-  addCount = () => {
-    this.setState(preveState => ({cartCount: preveState.cartCount + 1}))
+  addCart = dish => {
+    const {cartList} = this.state
+    const alreadyInsideDish = cartList.find(item => item.dishId === dish.dishId)
+    if (!alreadyInsideDish) {
+      const newDish = {...dish, quantity: 1}
+      this.setState(preveState => ({
+        cartList: [...preveState.cartList, newDish],
+      }))
+    } else {
+      this.setState(preveState => ({
+        cartList: preveState.cartList.map(item =>
+          item.dishId === dish.dishId
+            ? {...item, quantity: item.quantity + 1}
+            : item,
+        ),
+      }))
+    }
   }
 
-  minusCount = () => {
-    const {cartCount} = this.state
-    if (cartCount !== 0) {
-      this.setState(preveState => ({cartCount: preveState.cartCount - 1}))
+  removeItemFromCart = dish => {
+    const {cartList} = this.state
+    const isAlreadyExits = cartList.find(item => item.dishId === dish.dishId)
+    if (isAlreadyExits) {
+      this.setState(prev => ({
+        cartList: prev.cartList
+          .map(item =>
+            item.dishId === dish.dishId
+              ? {...dish, quantity: item.quantity - 1}
+              : item,
+          )
+          .filter(item => item.quantity > 0),
+      }))
     }
   }
 
@@ -85,24 +110,24 @@ class App extends Component {
   )
 
   successView = () => {
-    const {apiResponse, activeTab} = this.state
+    const {apiResponse, activeTab, cartList} = this.state
     const filterCategory = apiResponse.find(
       eachCategory => eachCategory.menuCategoryId === activeTab,
     )
-    console.log(filterCategory)
+
     return (
       <div className="card-container">
         <ul className="menu-list">
           {apiResponse.map(eachItem => {
             const isActive =
               activeTab === eachItem.menuCategoryId ? 'active' : null
+
             return (
-              <li key={eachItem.menuCategoryId}>
-                <button
-                  onClick={() => this.changeActiveTab(eachItem.menuCategoryId)}
-                  type="button"
-                  className={`menu-list-btn ${isActive}`}
-                >
+              <li
+                key={eachItem.menuCategoryId}
+                onClick={() => this.changeActiveTab(eachItem.menuCategoryId)}
+              >
+                <button type="button" className={`menu-list-btn ${isActive}`}>
                   {eachItem.menuCategory}
                 </button>
               </li>
@@ -113,8 +138,9 @@ class App extends Component {
           <Category
             key={eachCategoryObject.dishId}
             categoryItem={eachCategoryObject}
-            addCount={this.addCount}
-            minusCount={this.minusCount}
+            addCart={this.addCart}
+            removeItemFromCart={this.removeItemFromCart}
+            cartList={cartList}
           />
         ))}
       </div>
@@ -134,10 +160,11 @@ class App extends Component {
   }
 
   render() {
-    const {cartCount} = this.state
+    const {cartList} = this.state
+    const count = cartList.length
     return (
       <div className="bg-container">
-        <Header count={cartCount} />
+        <Header count={count} />
         {this.switchCase()}
       </div>
     )

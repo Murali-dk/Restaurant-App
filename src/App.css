@@ -25,10 +25,15 @@ body {
 }
 .menu-list {
   list-style: none;
+  display: flex;
+  overflow-x: auto;
+  width: 100%;
+}
+.menu-category {
+  width: 450%;
 }
 @media screen and (min-width: 767px) {
   .menu-list {
-    display: flex;
     justify-content: space-between;
   }
 }
@@ -39,6 +44,7 @@ body {
   font-size: 18px;
   cursor: pointer;
 }
+
 .active {
   color: orangered;
   text-decoration: underline;
