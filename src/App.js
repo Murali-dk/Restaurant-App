@@ -13,6 +13,7 @@ const constanceApiStatus = {
 class App extends Component {
   state = {
     apiStatus: constanceApiStatus.initial,
+    hotalName: '',
     apiResponse: [],
     cartList: [],
     activeTab: '',
@@ -27,24 +28,27 @@ class App extends Component {
   }
 
   camelCaseConvert = data => {
-    const convertData = data.map(eachData => ({
-      categoryDishes: eachData.category_dishes.map(item => ({
-        addonCat: item.addonCat,
-        dishAvailability: item.dish_Availability,
-        dishType: item.dish_Type,
-        dishCalories: item.dish_calories,
-        dishCurrency: item.dish_currency,
-        dishDescription: item.dish_description,
-        dishId: item.dish_id,
-        dishImage: item.dish_image,
-        dishName: item.dish_name,
-        dishPrice: item.dish_price,
-        nexturl: item.nexturl,
+    const convertData = {
+      restaurantName: data.restaurant_name,
+      tableMenuList: data.table_menu_list.map(eachData => ({
+        categoryDishes: eachData.category_dishes.map(item => ({
+          addonCat: item.addonCat,
+          dishAvailability: item.dish_Availability,
+          dishType: item.dish_Type,
+          dishCalories: item.dish_calories,
+          dishCurrency: item.dish_currency,
+          dishDescription: item.dish_description,
+          dishId: item.dish_id,
+          dishImage: item.dish_image,
+          dishName: item.dish_name,
+          dishPrice: item.dish_price,
+          nexturl: item.nexturl,
+        })),
+        menuCategory: eachData.menu_category,
+        menuCategoryId: eachData.menu_category_id,
+        menuCategoryImage: eachData.menu_category_image,
       })),
-      menuCategory: eachData.menu_category,
-      menuCategoryId: eachData.menu_category_id,
-      menuCategoryImage: eachData.menu_category_image,
-    }))
+    }
     return convertData
   }
 
@@ -55,12 +59,13 @@ class App extends Component {
       'https://apis2.ccbp.in/restaurant-app/restaurant-menu-list-details'
     const response = await fetch(url)
     const data = await response.json()
-    const updatedData = this.camelCaseConvert(data[0].table_menu_list)
-    console.log(data)
+    const updatedData = this.camelCaseConvert(data[0])
+    console.log(updatedData)
     this.setState({
-      apiResponse: updatedData,
+      apiResponse: updatedData.tableMenuList,
+      hotalName: updatedData.restaurantName,
       apiStatus: constanceApiStatus.success,
-      activeTab: updatedData[0].menuCategoryId,
+      activeTab: updatedData.tableMenuList[0].menuCategoryId,
     })
   }
 
@@ -170,10 +175,11 @@ class App extends Component {
   }
 
   render() {
+    const {hotalName} = this.state
     const getTotal = this.getingCartQuantity()
     return (
       <div className="bg-container">
-        <Header count={getTotal} />
+        <Header hotalName={hotalName} count={getTotal} />
         {this.switchCase()}
       </div>
     )

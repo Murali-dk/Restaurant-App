@@ -48,7 +48,7 @@ const Category = props => {
             <button type="button" onClick={decrease} className="btn">
               -
             </button>
-            <p>{getQuantity()}</p>
+            <p>{}</p>
             <button type="button" onClick={increase} className="btn">
               +
             </button>
